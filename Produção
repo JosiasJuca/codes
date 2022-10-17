@@ -1,0 +1,93 @@
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.firefox import options #busca dos elementos na tela
+from selenium.webdriver.firefox.options import Options #opções para o navegador
+from time import sleep
+import os
+import shutil
+import pandas as pd
+from pathlib import Path
+
+options = Options()
+options.headless = False #True #executar de forma oculta
+
+navegador = webdriver.Firefox(options=options)
+
+
+link = "https://terra.hinova.com.br/sga/sgav4_magna/v5/login.php"
+navegador.get(url=link)
+sleep(2)
+
+buttonpopup = navegador.find_element(By.XPATH,value="/html/body/div[2]/div[3]/div/div/div[2]/div/div/div/button")
+buttonpopup.click()
+sleep(3) #bom para deixar a página carregar
+
+
+
+
+inputUsuario = navegador.find_element(By.ID,value="usuario")
+inputUsuario.send_keys("LOGIN")
+sleep(1)
+
+inputSenha = navegador.find_element(By.ID,value="senha")
+inputSenha.send_keys("SENHA")
+sleep(1)
+
+buttonlogin = navegador.find_element(By.XPATH,value="/html/body/div[2]/div[2]/div[1]/div/div/form/button[1]")
+buttonlogin.click()
+sleep(2) #bom para deixar a página carregar
+
+
+link = "https://terra.hinova.com.br/sga/sgav4_magna/relatorio/relatorioBoleto.php"
+navegador.get(url=link)
+
+
+inputDataAbertura = navegador.find_element(By.ID,value="DataEmissao")
+inputDataAbertura.clear() #neste caso nao precisa, mas as vezes o campo tem value já ai o send_keys concatena
+inputDataAbertura.send_keys("01/10/2022")
+sleep(1)
+
+inputDatafehamento = navegador.find_element(By.ID,value="DataEmissaoFinal")
+inputDatafehamento.clear() #neste caso nao precisa, mas as vezes o campo tem value já ai o send_keys concatena
+inputDatafehamento.send_keys("31/10/2022")
+sleep(1)
+
+
+inputRemoverboletocan = navegador.find_element(By.ID,value="chkBoleto3")
+inputRemoverboletocan.click() #Remover boleto cancelado
+
+inputRemoverFiltroTipoBoleto = navegador.find_element(By.ID,value="chkTTipoBoletoAll")
+inputRemoverFiltroTipoBoleto.click() #Remover todos os filtros
+
+inputADDAdesao = navegador.find_element(By.ID,value="chkTipoBoletoAll1")
+inputADDAdesao.click() #Add boleto adesão
+
+inputADDAdesaofmv = navegador.find_element(By.ID,value="chkTipoBoletoAll25")
+inputADDAdesaofmv.click() #Add boleto adesão FMV
+
+inputlayout = navegador.find_element(By.ID,value="cmbLayoutRelatorio")
+inputlayout.click() #Esccolher Layout
+
+inputprodu = navegador.find_element(By.XPATH,value="/html/body/table/tbody/tr[3]/td/form/div/fieldset/table/tbody/tr/td/div[1]/table/tbody/tr[2]/td/div/span[1]/table[1]/tbody/tr[2]/td/div/table[1]/tbody/tr/td[2]/select/option[35]")
+inputprodu.click() #Selecionar produção
+
+
+inputselecionarexcel = navegador.find_element(By.XPATH,value="/html/body/table/tbody/tr[3]/td/form/div/fieldset/table/tbody/tr/td/div[1]/table/tbody/tr[2]/td/div/span[1]/table[3]/tbody/tr[2]/td/div/table/tbody/tr[4]/td[2]/div/input")
+inputselecionarexcel.click() #Esccolher Layout
+
+inputdownload = navegador.find_element(By.ID,value="pbSalvar")
+inputdownload.click() #Esccolher Layout
+sleep(3)
+
+
+#Caminho do completo do Download na tua máquina
+origem_download = Path('C:/Users/Juca/Downloads/relatorio.xls')
+
+# APONTA PARA O CAMINHO QUE O ARQUIVO SERÁ COPIADO
+destino_download = Path('C:/Users/Juca/Downloads/BI')
+
+# COPIA DATASET DO LOCAL DE ORIGEM NO DESTINO
+shutil.copy2(origem_download, destino_download)
+
+os.rename('relatorio.xls','atual.xls')
+
